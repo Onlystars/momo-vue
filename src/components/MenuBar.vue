@@ -1,10 +1,9 @@
 <template>
   <el-menu
-    :router="true"
     :collapse="isCollapse"
     background-color="#20222A"
     text-color="#fff"
-    :default-active="$router.path"
+    :default-active="$route.path"
     active-text-color="#ffd04b"
     unique-opened
   >
@@ -220,13 +219,6 @@ export default {
   created(){
   },
   methods:{
-    // 同步菜单选项卡
-      selectMenu(menu){
-        // 设置选项卡
-        this.$store.commit('selectMenu', menu)
-        // 设置路由
-        this.$router.push({name: menu.name})
-      }
   }
 };
 </script>

@@ -46,13 +46,14 @@ export default {
   methods: {
     // 点击选项卡
     tabClick(tab){
+      console.log(tab);
       let obj = {}
       // 选项卡名
       obj.title = tab.label
       // 选项卡标识符
       obj.name = tab.name
       this.$store.commit('selectMenu', obj)
-      this.$router.path = tab.path
+      this.$router.push({name: obj.name})
     },
     // 删除选项卡
     removeTab(targetName) {
