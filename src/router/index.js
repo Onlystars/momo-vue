@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+const VueRouterPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(to) {
+  return VueRouterPush.call(this, to).catch((err) => err);
+};
 Vue.use(VueRouter)
 
 const routes = [
@@ -14,6 +17,11 @@ const routes = [
     name: 'home',
     component: () => import( '../views/Home.vue'),
     children: [
+      {
+        path: '/desktop',
+        name: 'desktop',
+        component: () => import('@/views/Desktop/Desktop.vue')
+      },
       {
         path: '/departmentList',
         name: 'departmentList',
