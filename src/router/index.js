@@ -8,40 +8,40 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/login',
+    path: '/',
     name: 'login',
     component: () => import( '../views/Login.vue')
   },
   {
-    path: '/',
+    path: '/home',
     name: 'home',
     component: () => import( '../views/Home.vue'),
     children: [
       {
         path: '/desktop',
         name: 'desktop',
-        component: () => import('@/views/Desktop/Desktop.vue')
+        component: () => import('@/views/DeskTop.vue')
       },
-      {
-        path: '/departmentList',
-        name: 'departmentList',
-        component: () => import('@/views/system/Department/DepartmentList.vue')
-      },
-      {
-        path: '/menuList',
-        name: 'menuList',
-        component: () => import('@/views/system/Menu/MenuList.vue')
-      },
-      {
-        path: '/roleList',
-        name: 'roleList',
-        component: () => import('@/views/system/Role/RoleList.vue')
-      },
-      {
-        path: '/userList',
-        name: 'userList',
-        component: () => import('@/views/system/User/UserList.vue')
-      },
+      // {
+      //   path: '/departmentList',
+      //   name: 'departmentList',
+      //   component: () => import('@/views/system/Department/DepartmentList.vue')
+      // },
+      // {
+      //   path: '/menuList',
+      //   name: 'menuList',
+      //   component: () => import('@/views/system/Menu/MenuList.vue')
+      // },
+      // {
+      //   path: '/roleList',
+      //   name: 'roleList',
+      //   component: () => import('@/views/system/Role/RoleList.vue')
+      // },
+      // {
+      //   path: '/userList',
+      //   name: 'userList',
+      //   component: () => import('@/views/system/User/UserList.vue')
+      // },
     ]
   },
   

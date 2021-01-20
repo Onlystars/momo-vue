@@ -15,6 +15,9 @@ export default {
     ],
     // 菜单伸缩
     isCollapse: false,
+    // 菜单数据
+    menuData: [],
+
   },
   mutations: {
     // 点击菜单时调用
@@ -48,6 +51,31 @@ export default {
     setOpenOrClose(state) {
       state.isCollapse = !state.isCollapse;
     },
+    // 
+    getMenuList(state, router){
+      // 1.取出菜单数据
+      let menuList = sessionStorage.getItem('menuList')
+      // 2.设置菜单数据
+      if(menuList){
+        state.menuData = JSON.parse(menuList)
+      }
+      // 3.取出路由数据
+      let temp = sessionStorage.getItem('routerList')
+      let routerList = []
+      if(temp){
+        routerList = JSON.parse(temp)
+      }
+      // 4.动态生成路由
+        // 4.1 获取原来的路由
+      let oldRouter = router.options.routes
+        // 4.2 遍历后台返回的路由数据，动态生成路由
+      routerList.forEach(item => {
+        item.component = () => import(`@/views${item.url}.vue`)
+        oldRouter[1].children.push(item)
+      });
+      // 5.添加到现有路由里面
+      router.addRoutes(oldRouter)
+    }
   },
   actions: {},
 };

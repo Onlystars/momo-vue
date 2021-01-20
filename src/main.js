@@ -18,7 +18,14 @@ router.beforeEach((to, form, next) => {
   store.commit('getTabs')
   // 设置当前激活的选项卡
   store.commit('setActiveTabs', to.name)
-  next()
+
+  //如果store中的菜单数据menuData被刷新了，那么重新加载
+  if (store.state.MenuStore.menuData.length == 0) {
+    store.commit('getMenuList', router)
+    next({ path: to.path })
+  } else {
+    next()
+  }
 })
 
 new Vue({
