@@ -1,24 +1,12 @@
-# momo-vue
+# 1.简介
 
-## Project setup
-```
-npm install
-```
+​	基于Spring Boot + Spring Security + Redis + JWT 的通用权限管理系统--前后端分离版
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
 
-### Compiles and minifies for production
-```
-npm run build
-```
 
-### Lints and fixes files
-```
-npm run lint
-```
+​	后端部分：https://github.com/Onlystars/momo-admin
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+持续更新中。。。
+
