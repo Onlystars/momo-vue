@@ -7,7 +7,7 @@
       <el-header height="81px">
         <div id="headerTop">
           <div style="display: inline-block; position: absolute; left: 10px">
-            <i class="el-icon-s-fold" @click="closeMenu"></i>
+            <i :class="isCollapse?'el-icon-s-unfold':'el-icon-s-fold'" @click="closeMenu"></i>
           </div>
           <div
             style="
@@ -97,6 +97,12 @@ export default {
 }
 .el-icon-s-fold {
   font-size: 28px;
-  margin: 8px 0px 0px 10px;
+  margin: 8px 0px 0px 0px;
+  cursor: pointer;
+}
+.el-icon-s-unfold {
+  font-size: 28px;
+  margin: 8px 0px 0px 0px;
+  cursor: pointer;
 }
 </style>
