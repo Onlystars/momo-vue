@@ -18,9 +18,6 @@ router.beforeEach((to, from, next) => {
   store.commit("getTabs");
   // 设置当前激活的选项卡
   store.commit("setActiveTabs", to.name);
-
-
-  console.log(from.path, to.path);
   //如果store中的菜单数据menuData被刷新了，那么重新加载
   let menuList = sessionStorage.getItem('menuList')
   if (to.path === '/') {
