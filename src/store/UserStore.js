@@ -3,7 +3,15 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 export default {
-  state: {},
-  mutations: {},
+  state: {
+    tokenName: "token",
+    token: "",
+  },
+  mutations: {
+    // 设置token
+    setToken(state, val) {
+      state.token = val;
+    },
+  },
   actions: {},
 };

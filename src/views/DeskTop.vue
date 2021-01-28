@@ -99,7 +99,9 @@ export default {
       contractChart.setOption(this.contractChartOption);
     },
   },
-  created() {},
+  created() {
+    console.log(this.$store.state.UserStore.token);
+  },
   mounted() {
     this.drawLine();
     this.drawLine2();
