@@ -1,14 +1,31 @@
 <template>
   <el-main>
-    <el-form size="mini" :model="searchForm" ref="searchForm" label-width="80px">
+    <el-form
+      size="mini"
+      :model="searchForm"
+      ref="searchForm"
+      label-width="80px"
+    >
       <el-row>
         <el-col :span="5">
           <el-form-item label="名称">
             <el-input v-model="searchForm.roleName"></el-input>
           </el-form-item>
         </el-col>
-        <el-button style="margin-left:20px;" size="mini" type="primary" icon="el-icon-search">搜索</el-button>
-        <el-button @click="addMenu" size="mini" type="primary" icon="el-icon-plus">新增</el-button>
+        <el-button
+          style="margin-left: 20px"
+          size="mini"
+          type="primary"
+          icon="el-icon-search"
+          >搜索</el-button
+        >
+        <el-button
+          @click="addMenu"
+          size="mini"
+          type="primary"
+          icon="el-icon-plus"
+          >新增</el-button
+        >
       </el-row>
     </el-form>
 
@@ -16,12 +33,17 @@
       :height="tableHeight"
       size="mini"
       :data="tableData"
-      style="width: 100%;margin-bottom: 20px;"
+      style="width: 100%; margin-bottom: 20px"
       row-key="id"
       border
-      :tree-props="{children: 'children'}"
+      :tree-props="{ children: 'children' }"
     >
-      <el-table-column prop="label" label="名称" sortable width="180"></el-table-column>
+      <el-table-column
+        prop="label"
+        label="名称"
+        sortable
+        width="180"
+      ></el-table-column>
       <el-table-column prop="icon" label="图标" sortable width="180">
         <template slot-scope="scope">
           <i :class="scope.row.icon || ''"></i>
@@ -30,8 +52,12 @@
       <el-table-column prop="type" label="类型">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.type === '0'" size="small">目录</el-tag>
-          <el-tag v-else-if="scope.row.type === '1'" size="small" type="success">菜单</el-tag>
-          <el-tag v-else-if="scope.row.type === '2'" size="small" type="info">按钮</el-tag>
+          <el-tag v-else-if="scope.row.type === '1'" size="small" type="success"
+            >菜单</el-tag
+          >
+          <el-tag v-else-if="scope.row.type === '2'" size="small" type="info"
+            >按钮</el-tag
+          >
         </template>
       </el-table-column>
       <el-table-column prop="url" label="菜单URL"></el-table-column>
@@ -40,8 +66,12 @@
       <el-table-column prop="orderNum" label="序号"></el-table-column>
       <el-table-column width="170" align="center" label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="editMenu(scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="primary" size="mini" @click="editMenu(scope.row)"
+            >编辑</el-button
+          >
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -51,14 +81,14 @@
         :rules="addMenuValdate"
         :inline="true"
         size="mini"
-        :model="addFrom"
-        ref="addFrom"
+        :model="addForm"
+        ref="addForm"
         label-width="80px"
       >
         <el-row>
           <el-col :span="24">
             <el-form-item prop="type" label="权限类型">
-              <el-radio-group v-model="addFrom.type">
+              <el-radio-group v-model="addForm.type">
                 <el-radio :label="'0'">目录</el-radio>
                 <el-radio :label="'1'">菜单</el-radio>
                 <el-radio :label="'2'">按钮</el-radio>
@@ -67,28 +97,32 @@
           </el-col>
         </el-row>
         <el-form-item prop="parentName" label="上级菜单">
-          <el-input readonly @click.native="selectParent" v-model="addFrom.parentName"></el-input>
+          <el-input
+            readonly
+            @click.native="selectParent"
+            v-model="addForm.parentName"
+          ></el-input>
         </el-form-item>
         <el-form-item prop="label" label="权限名称">
-          <el-input v-model="addFrom.label"></el-input>
+          <el-input v-model="addForm.label"></el-input>
         </el-form-item>
-        <el-form-item prop="icon" v-if="addFrom.type != '2'" label="菜单图标">
-          <el-input v-model="addFrom.icon"></el-input>
+        <el-form-item prop="icon" v-if="addForm.type != '2'" label="菜单图标">
+          <el-input v-model="addForm.icon"></el-input>
         </el-form-item>
-        <el-form-item prop="name" v-if="addFrom.type == '1'" label="路由名称">
-          <el-input v-model="addFrom.name"></el-input>
+        <el-form-item prop="name" v-if="addForm.type == '1'" label="路由名称">
+          <el-input v-model="addForm.name"></el-input>
         </el-form-item>
-        <el-form-item prop="path" v-if="addFrom.type != '2'" label="路由地址">
-          <el-input v-model="addFrom.path"></el-input>
+        <el-form-item prop="path" v-if="addForm.type != '2'" label="路由地址">
+          <el-input v-model="addForm.path"></el-input>
         </el-form-item>
-        <el-form-item prop="url" v-if="addFrom.type == '1'" label="组件路径">
-          <el-input v-model="addFrom.url"></el-input>
+        <el-form-item prop="url" v-if="addForm.type == '1'" label="组件路径">
+          <el-input v-model="addForm.url"></el-input>
         </el-form-item>
         <el-form-item prop="code" label="权限标识">
-          <el-input v-model="addFrom.code"></el-input>
+          <el-input v-model="addForm.code"></el-input>
         </el-form-item>
         <el-form-item label="显示序号">
-          <el-input-number v-model="addFrom.orderNum"></el-input-number>
+          <el-input-number v-model="addForm.orderNum"></el-input-number>
         </el-form-item>
       </el-form>
 
@@ -102,7 +136,9 @@
       <tree :nodes="nodes" :setting="parentSetting" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="parentDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="parentDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="parentDialogVisible = false"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </el-main>
@@ -110,10 +146,15 @@
 
 <script>
 import tree from "vue-giant-tree";
-
+import {
+  getMenuListApi,
+  getParentTreeApi,
+  addPermissionApi,
+  editSaveApi,
+} from "@/api/permission";
 export default {
   components: {
-    tree
+    tree,
   },
   mounted() {
     this.$nextTick(() => {
@@ -125,11 +166,9 @@ export default {
     this.getParenList();
   },
   methods: {
-     async handleDelete(row){
-
-    },
+    async handleDelete(row) {},
     //编辑权限点击事件
-    editMenu(row){
+    editMenu(row) {
       //设置编辑标志为1
       this.editTag = "1";
       this.boxTitle = "编辑权限";
@@ -137,20 +176,36 @@ export default {
       this.resetForm("addMenu");
       //回显编辑的数据
     },
-    async getPermissionById(id){
-
-    },
+    async getPermissionById(id) {},
     //新增或编辑提交
     addComit() {
-
+      this.$refs["addForm"].validate((valid) => {
+        if (!valid) return;
+        // 新增
+        if (this.editTag == "0") {
+          addPermissionApi(this.addForm).then((res) => {
+            console.log(res);
+          });
+        } else {
+          // 编辑保存
+          editSaveApi(this.addForm).then((res) => {
+            console.log(res);
+          });
+        }
+        this.dialogVisible = false;
+      });
     },
     //获取上级菜单树
     async getParenList() {
-
+      getParentTreeApi().then((res) => {
+        this.nodes = res.data;
+      });
     },
     //获取表格数据
     async getMenuList() {
-
+      getMenuListApi().then((res) => {
+        this.tableData = res.data;
+      });
     },
     //选择上级菜单
     selectParent() {
@@ -163,7 +218,7 @@ export default {
       this.dialogTitle = "新增权限";
       this.dialogVisible = true;
       //清空表单数据
-      this.resetForm("addFrom");
+      this.resetForm("addForm");
     },
     //解决重置表单时报 'resetFields' of undefined的错
     resetForm(formName) {
@@ -173,120 +228,37 @@ export default {
     },
     //上级部门树点击事件
     ztreeParentOnClick(evt, treeId, treeNode) {
-      this.addFrom.parentName = treeNode.name;
-      this.addFrom.parentId = treeNode.id;
+      this.addForm.parentName = treeNode.name;
+      this.addForm.parentId = treeNode.id;
       console.log(evt);
       console.log(treeId);
       console.log(treeNode);
-    }
+    },
   },
   data() {
     return {
       addMenuValdate: {
         type: [{ required: true, trigger: "change", message: "请填选择类型" }],
         label: [
-          { required: true, trigger: "change", message: "请填写权限名称" }
+          { required: true, trigger: "change", message: "请填写权限名称" },
         ],
         parentName: [
-          { required: true, trigger: "change", message: "请选择上级菜单" }
+          { required: true, trigger: "change", message: "请选择上级菜单" },
         ],
         name: [
-          { required: true, trigger: "change", message: "请填写路由名称" }
+          { required: true, trigger: "change", message: "请填写路由名称" },
         ],
         path: [
-          { required: true, trigger: "change", message: "请填写路由地址" }
+          { required: true, trigger: "change", message: "请填写路由地址" },
         ],
         url: [{ required: true, trigger: "change", message: "请填写组件路径" }],
-        code: [{ required: true, trigger: "change", message: "请填写权限标识" }]
+        code: [
+          { required: true, trigger: "change", message: "请填写权限标识" },
+        ],
       },
       //0 新增  1 编辑
       editTag: "0",
-      nodes: [
-        {
-          id: 0,
-          pid: -1,
-          name: "顶级菜单",
-          open: true,
-          checked: false
-        },
-        {
-          id: 17,
-          pid: 0,
-          name: "系统管理",
-          open: true,
-          checked: false
-        },
-        {
-          id: 18,
-          pid: 17,
-          name: "用户管理",
-          open: true,
-          checked: false
-        },
-        {
-          id: 23,
-          pid: 17,
-          name: "角色管理",
-          open: true,
-          checked: false
-        },
-        {
-          id: 28,
-          pid: 17,
-          name: "权限管理",
-          open: true,
-          checked: false
-        },
-        {
-          id: 33,
-          pid: 17,
-          name: "机构管理",
-          open: true,
-          checked: false
-        },
-        {
-          id: 34,
-          pid: 0,
-          name: "商品管理",
-          open: true,
-          checked: false
-        },
-        {
-          id: 36,
-          pid: 34,
-          name: "分类管理",
-          open: true,
-          checked: false
-        },
-        {
-          id: 37,
-          pid: 34,
-          name: "品牌管理",
-          open: true,
-          checked: false
-        },
-        {
-          id: 42,
-          pid: 0,
-          name: "系统工具",
-          open: true,
-          checked: false
-        },
-        {
-          id: 43,
-          pid: 42,
-          name: "代码生成",
-          open: true,
-          checked: false
-        },
-        {
-          id: 77,
-          pid: 42,
-          name: "接口文档",
-          open: true,
-          checked: false
-        }
-      ],
+      nodes: [],
       //控制上级部门弹框显示
       parentDialogVisible: false,
       //上级树陪
@@ -297,7 +269,7 @@ export default {
         view: {
           showLine: true,
           showIcon: false,
-          fontCss: { "font-size": "12px", color: "#333" }
+          fontCss: { "font-size": "12px", color: "#333" },
         },
         //设置这里会显示复选框
         // check: {
@@ -308,25 +280,25 @@ export default {
             enable: true,
             idKey: "id",
             pIdKey: "pid",
-            rootPId: "0"
-          }
+            rootPId: "0",
+          },
         },
         callback: {
-          onClick: this.ztreeParentOnClick
-        }
+          onClick: this.ztreeParentOnClick,
+        },
       },
       //存储表单数据
-      addFrom: {
+      addForm: {
         id: "", //编辑id
         label: "",
         name: "",
-        type: 0,
+        type: "0",
         parentId: "",
         orderNum: "",
         parentName: "",
         path: "",
         code: "",
-        icon: ""
+        icon: "",
       },
       dialogTitle: "",
       //控制弹框显示和影藏
@@ -335,7 +307,7 @@ export default {
       tableHeight: 0,
       //搜索数据绑定
       searchForm: {
-        roleName: ""
+        roleName: "",
       },
       //表格数据
       tableData: [],
@@ -390,7 +362,7 @@ export default {
                   createTime: "2020-04-12T11:58:48.000+0000",
                   updateTime: "2020-04-12T11:58:48.000+0000",
                   isHome: 0,
-                  children: []
+                  children: [],
                 },
                 {
                   id: 76,
@@ -408,7 +380,7 @@ export default {
                   createTime: "2020-04-12T12:42:20.000+0000",
                   updateTime: "2020-04-12T12:42:20.000+0000",
                   isHome: 0,
-                  children: []
+                  children: [],
                 },
                 {
                   id: 78,
@@ -426,9 +398,9 @@ export default {
                   createTime: "2020-04-18T02:25:55.000+0000",
                   updateTime: "2020-04-18T02:25:55.000+0000",
                   isHome: 0,
-                  children: []
-                }
-              ]
+                  children: [],
+                },
+              ],
             },
             {
               id: 18,
@@ -463,7 +435,7 @@ export default {
                   createTime: "2023-08-08T03:11:11.000+0000",
                   updateTime: "2023-08-09T07:26:28.000+0000",
                   isHome: 0,
-                  children: []
+                  children: [],
                 },
                 {
                   id: 21,
@@ -481,7 +453,7 @@ export default {
                   createTime: "2023-08-08T03:11:11.000+0000",
                   updateTime: "2023-08-09T07:26:28.000+0000",
                   isHome: 0,
-                  children: []
+                  children: [],
                 },
                 {
                   id: 22,
@@ -499,7 +471,7 @@ export default {
                   createTime: "2023-08-08T03:11:11.000+0000",
                   updateTime: "2023-08-09T07:26:28.000+0000",
                   isHome: 0,
-                  children: []
+                  children: [],
                 },
                 {
                   id: 80,
@@ -517,9 +489,9 @@ export default {
                   createTime: "2020-04-18T02:50:14.000+0000",
                   updateTime: "2020-04-18T02:50:14.000+0000",
                   isHome: 0,
-                  children: []
-                }
-              ]
+                  children: [],
+                },
+              ],
             },
             {
               id: 23,
@@ -554,7 +526,7 @@ export default {
                   createTime: "2023-08-08T03:11:11.000+0000",
                   updateTime: "2023-08-09T07:26:28.000+0000",
                   isHome: 0,
-                  children: []
+                  children: [],
                 },
                 {
                   id: 26,
@@ -572,7 +544,7 @@ export default {
                   createTime: "2023-08-08T03:11:11.000+0000",
                   updateTime: "2023-08-09T07:26:28.000+0000",
                   isHome: 0,
-                  children: []
+                  children: [],
                 },
                 {
                   id: 27,
@@ -590,7 +562,7 @@ export default {
                   createTime: "2023-08-08T03:11:11.000+0000",
                   updateTime: "2023-08-09T07:26:28.000+0000",
                   isHome: 0,
-                  children: []
+                  children: [],
                 },
                 {
                   id: 79,
@@ -608,9 +580,9 @@ export default {
                   createTime: "2020-04-18T02:31:05.000+0000",
                   updateTime: "2020-04-18T02:31:05.000+0000",
                   isHome: 0,
-                  children: []
-                }
-              ]
+                  children: [],
+                },
+              ],
             },
             {
               id: 28,
@@ -645,7 +617,7 @@ export default {
                   createTime: "2023-08-08T03:11:11.000+0000",
                   updateTime: "2023-08-09T07:26:28.000+0000",
                   isHome: 0,
-                  children: []
+                  children: [],
                 },
                 {
                   id: 31,
@@ -663,7 +635,7 @@ export default {
                   createTime: "2023-08-08T03:11:11.000+0000",
                   updateTime: "2023-08-09T07:26:28.000+0000",
                   isHome: 0,
-                  children: []
+                  children: [],
                 },
                 {
                   id: 32,
@@ -681,11 +653,11 @@ export default {
                   createTime: "2023-08-08T03:11:11.000+0000",
                   updateTime: "2023-08-09T07:26:28.000+0000",
                   isHome: 0,
-                  children: []
-                }
-              ]
-            }
-          ]
+                  children: [],
+                },
+              ],
+            },
+          ],
         },
         {
           id: 34,
@@ -737,7 +709,7 @@ export default {
                   createTime: "2020-04-12T09:33:58.000+0000",
                   updateTime: "2020-04-12T09:33:58.000+0000",
                   isHome: 0,
-                  children: []
+                  children: [],
                 },
                 {
                   id: 39,
@@ -755,9 +727,9 @@ export default {
                   createTime: "2020-04-12T09:35:30.000+0000",
                   updateTime: "2020-04-12T09:35:30.000+0000",
                   isHome: 0,
-                  children: []
-                }
-              ]
+                  children: [],
+                },
+              ],
             },
             {
               id: 37,
@@ -792,7 +764,7 @@ export default {
                   createTime: "2020-04-12T09:36:14.000+0000",
                   updateTime: "2020-04-12T09:36:14.000+0000",
                   isHome: 0,
-                  children: []
+                  children: [],
                 },
                 {
                   id: 41,
@@ -810,11 +782,11 @@ export default {
                   createTime: "2020-04-12T09:36:46.000+0000",
                   updateTime: "2020-04-12T09:36:46.000+0000",
                   isHome: 0,
-                  children: []
-                }
-              ]
-            }
-          ]
+                  children: [],
+                },
+              ],
+            },
+          ],
         },
         {
           id: 42,
@@ -849,7 +821,7 @@ export default {
               createTime: "2020-04-16T04:44:42.000+0000",
               updateTime: "2020-04-12T09:44:06.000+0000",
               isHome: 0,
-              children: []
+              children: [],
             },
             {
               id: 77,
@@ -867,13 +839,13 @@ export default {
               createTime: "2020-04-13T03:31:45.000+0000",
               updateTime: "2020-04-13T03:31:45.000+0000",
               isHome: 0,
-              children: []
-            }
-          ]
-        }
-      ]
+              children: [],
+            },
+          ],
+        },
+      ],
     };
-  }
+  },
 };
 </script>
 

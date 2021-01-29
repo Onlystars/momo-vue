@@ -119,6 +119,9 @@ export default {
           // 保存token
           this.$store.commit("setToken", res.data.token);
           sessionStorage.setItem("token", JSON.stringify(res.data.token));
+          // 保存auths
+          this.$store.commit("setAuths", res.data.authList);
+          sessionStorage.setItem("auths", JSON.stringify(res.data.authList));
           //动态生成路由
           this.$store.commit("getMenuList", this.$router);
           this.$message({

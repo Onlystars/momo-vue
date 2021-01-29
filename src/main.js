@@ -19,21 +19,21 @@ router.beforeEach((to, from, next) => {
   // 设置当前激活的选项卡
   store.commit("setActiveTabs", to.name);
   //如果store中的菜单数据menuData被刷新了，那么重新加载
-  let menuList = sessionStorage.getItem('menuList')
-  if (to.path === '/') {
-    if (menuList) {
-      next({ path: '/home' })
+  let token = window.sessionStorage.getItem("token");
+  if (to.path === "/login") {
+    if (token) {
+      next({ path: "/home" });
     } else {
       next();
     }
   } else {
-    if (!menuList && to.name !== '') {
-      next({ path: '/' })
+    if (!token && to.name !== "login") {
+      next({ path: "/login" });
     } else {
       if (store.state.MenuStore.menuData.length == 0) {
-        store.commit('getMenuList', router);
+        store.commit("getMenuList", router);
         if (to.path == "/") {
-          next({ path: '/home' })
+          next({ path: "/home" });
         } else {
           next({ path: to.path });
         }

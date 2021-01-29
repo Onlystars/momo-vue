@@ -11,15 +11,15 @@ export function request(config) {
   //2.axios请求拦截器
   http.interceptors.request.use((config) => {
     //携带token
-    if (store.state.token) {
+    if (store.state.UserStore.token) {
       //在vuex找token
-      let token = store.state.token;
+      let token = store.state.UserStore.token;
       config.headers = { token: token };
       return config;
-    } else if (window.localStorage.getItem("token")) {
+    } else if (window.sessionStorage.getItem("token")) {
       //在sessionStorage找token
-      let token = window.localStorage.getItem("token");
-      config.headers = { token: token };
+      let token = window.sessionStorage.getItem("token");
+      config.headers = { token: token.substring(1, token.length - 1) };
       return config;
     } else {
       //提示token找不到并跳转到登录页
@@ -28,7 +28,7 @@ export function request(config) {
         type: "error",
         duration: 1000,
         onClose: () => {
-          router.push("/login");
+          router.push("login");
         },
       });
     }
@@ -37,46 +37,30 @@ export function request(config) {
   //3.axios响应拦截
   http.interceptors.response.use(
     (res) => {
-      if (res.data.code == 21002) {
-        //提示token失效并跳转到登录页
+      // if (res.data.msg == "token验证失败!") {
+      //   Message({
+      //     message: res.data.msg,
+      //     type: "error",
+      //     duration: 1000,
+      //   });
+      //   window.sessionStorage.clear();
+      //   router.push("login");
+      // }
+      if (res.data.code != 200) {
         Message({
-          message: res.data.message,
-          type: "error",
-          duration: 1000,
-          onClose: () => {
-            router.push("/login");
-          },
-        });
-      } else if (res.data.success) {
-        Message({
-          message: res.data.message,
-          type: "success",
-          duration: 1000,
-        });
-      } else {
-        Message({
-          message: res.data.message,
+          message: res.data.msg,
           type: "error",
           duration: 1000,
         });
-        return Promise.reject(res.data);
       }
+      Message({
+        message: res.data.msg,
+        type: "success",
+        duration: 1000,
+      });
       return res.data;
     },
     (err) => {
-      //判断token是否失效
-      if (err.response.data.error_code == 21002) {
-        //提示token失效并跳转到登录页
-        Message({
-          message: err.response.data.message,
-          type: "error",
-          duration: 1000,
-          onClose: () => {
-            router.push("/login");
-          },
-        });
-      }
-
       return Promise.reject(err.response.data);
     }
   );
