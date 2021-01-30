@@ -37,15 +37,16 @@ export function request(config) {
   //3.axios响应拦截
   http.interceptors.response.use(
     (res) => {
-      // if (res.data.msg == "token验证失败!") {
-      //   Message({
-      //     message: res.data.msg,
-      //     type: "error",
-      //     duration: 1000,
-      //   });
-      //   window.sessionStorage.clear();
-      //   router.push("login");
-      // }
+      // token失效
+      if (res.data.code == 202) {
+        Message({
+          message: res.data.msg,
+          type: "error",
+          duration: 1000,
+        });
+        window.sessionStorage.clear();
+        router.push("login");
+      }
       if (res.data.code != 200) {
         Message({
           message: res.data.msg,

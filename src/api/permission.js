@@ -33,3 +33,21 @@ export function editSaveApi(data) {
     data,
   });
 }
+
+// 根据id获取权限
+export function getMenuByIdApi(params) {
+  return request({
+    url: "/api/permission/getMenuById",
+    method: "get",
+    params,
+  });
+}
+
+// 根据id删除权限
+export function deleteEntityApi(data) {
+  return request({
+    url: "/api/permission/deleteEntity",
+    method: "post",
+    data,
+  });
+}
