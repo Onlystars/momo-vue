@@ -169,10 +169,16 @@ export default {
   },
   methods: {
     async handleDelete(row) {
-      deleteEntityApi(row).then((res) => {
-        console.log(res);
-        this.getMenuList();
-        this.getParenList();
+      this.$confirm("确定删除吗？", "系统提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "waring",
+      }).then(async () => {
+        deleteEntityApi(row).then((res) => {
+          console.log(res);
+          this.getMenuList();
+          this.getParenList();
+        });
       });
     },
     //编辑权限点击事件
