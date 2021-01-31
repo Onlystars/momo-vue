@@ -1,19 +1,27 @@
 <template>
   <el-container>
     <el-aside width="200px">
-      <div class="ub cross-center" style="margin-left:5px;font-size:16px;margin-top:5px;">
+      <div
+        class="ub cross-center"
+        style="margin-left: 5px; font-size: 16px; margin-top: 5px"
+      >
         <i class="el-icon-s-grid"></i>
-        <span style="margin-left:3px;">组织机构</span>
+        <span style="margin-left: 3px">组织机构</span>
       </div>
       <tree
-        style="padding-left: 0px;padding-top: 5px;"
+        style="padding-left: 0px; padding-top: 5px"
         :nodes="nodes"
         :setting="setting"
         @onCreated="handleCreated"
       />
     </el-aside>
     <el-main>
-      <el-form size="mini" :model="searchForm" ref="searchForm" label-width="80px">
+      <el-form
+        size="mini"
+        :model="searchForm"
+        ref="searchForm"
+        label-width="80px"
+      >
         <el-row>
           <el-col :span="5">
             <el-form-item label="部门名称">
@@ -25,19 +33,48 @@
               <el-input v-model="searchForm.deptPhone"></el-input>
             </el-form-item>
           </el-col>
-          <el-button style="margin-left:20px;" size="mini" type="primary" icon="el-icon-search">搜索</el-button>
-          <el-button @click="addDept" size="mini" type="primary" icon="el-icon-plus">新增</el-button>
+          <el-button
+            @click="getDepartmentList()"
+            style="margin-left: 20px"
+            size="mini"
+            type="primary"
+            icon="el-icon-search"
+            >搜索</el-button
+          >
+          <el-button
+            @click="addDept"
+            size="mini"
+            type="primary"
+            icon="el-icon-plus"
+            >新增</el-button
+          >
         </el-row>
       </el-form>
 
-      <el-table size="mini" :data="tableData" :height="tableHeight" border style="width: 100%">
+      <el-table
+        size="mini"
+        :data="tableData"
+        :height="tableHeight"
+        border
+        style="width: 100%"
+      >
         <el-table-column prop="name" label="部门名称"></el-table-column>
         <el-table-column prop="parentName" label="上级部门"></el-table-column>
         <el-table-column prop="deptPhone" label="部门电话"></el-table-column>
         <el-table-column width="170" align="center" label="操作">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              @click="handleEdit(scope.$index, scope.row)"
+              >编辑</el-button
+            >
+            <el-button
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -51,7 +88,11 @@
       ></el-pagination>
     </el-main>
     <!--新增部门弹框-->
-    <el-dialog :title="deptDialogTitle" :visible.sync="dialogVisible" width="35%">
+    <el-dialog
+      :title="deptDialogTitle"
+      :visible.sync="dialogVisible"
+      width="35%"
+    >
       <el-form
         :rules="addDeptValdate"
         size="mini"
@@ -60,7 +101,10 @@
         label-width="80px"
       >
         <el-form-item prop="parentName" label="上级部门">
-          <el-input @click.native="selectDept" v-model="addForm.parentName"></el-input>
+          <el-input
+            @click.native="selectDept"
+            v-model="addForm.parentName"
+          ></el-input>
         </el-form-item>
         <el-form-item prop="name" label="部门名称">
           <el-input v-model="addForm.name"></el-input>
@@ -85,10 +129,16 @@
     </el-dialog>
     <!--上级部门弹框-->
     <el-dialog title="选择上级" :visible.sync="parentDialogVisible" width="30%">
-      <tree @onCreated="parentCreated" :nodes="parentNodes" :setting="parentSetting"></tree>
+      <tree
+        @onCreated="parentCreated"
+        :nodes="parentNodes"
+        :setting="parentSetting"
+      ></tree>
       <span slot="footer" class="dialog-footer">
         <el-button @click="parentDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="parentDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="parentDialogVisible = false"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </el-container>
@@ -96,10 +146,19 @@
 
 <script>
 import tree from "vue-giant-tree";
+import {
+  getDepartmentListApi,
+  addDepartmentApi,
+  getDepartmentByIdApi,
+  updateDepartmentApi,
+  deleteByIdApi,
+  getLeftTreeApi,
+  getParentTreeApi,
+} from "@/api/department";
 export default {
   name: "departmentList",
   components: {
-    tree
+    tree,
   },
   created() {
     //获取左侧部门树
@@ -110,104 +169,52 @@ export default {
   methods: {
     //添加或编辑部门时提交事件
     addDeptSave() {
+      this.$refs.addForm.validate(async (valid) => {
+        if (valid) {
+          if (this.editTag == "0") {
+            //新增url
+            addDepartmentApi(this.addForm).then((res) => {
+              console.log(res);
+              //刷新上级部门树
+              this.getParentTree();
+              //获取左侧部门树
+              this.getLeftTree();
+              //刷新列表
+              this.getDepartmentList();
+              this.dialogVisible = false;
+            });
+          } else {
+            //编辑url
+            updateDepartmentApi(this.addForm).then((res) => {
+              console.log(res);
+              //刷新上级部门树
+              this.getParentTree();
+              //获取左侧部门树
+              this.getLeftTree();
+              //刷新列表
+              this.getDepartmentList();
+              this.dialogVisible = false;
+            });
+          }
+        }
+      });
     },
     //获取新增部门上级部门树
     async getParentTree() {
-      
+      getParentTreeApi().then((res) => {
+        this.parentNodes = res.data;
+      });
     },
     //获取左边部门树
     async getLeftTree() {
-      
+      getLeftTreeApi().then((res) => {
+        console.log(res);
+        this.nodes = res.data;
+      });
     },
     //选择上级部门事件
     selectDept() {
       this.parentDialogVisible = true;
-      this.parentNodes = [
-        {
-          id: "0",
-          pid: "-1",
-          likeId: "0,",
-          parentName: null,
-          manager: null,
-          name: "顶级部门",
-          deptCode: null,
-          deptAddress: null,
-          deptPhone: null,
-          orderNum: null
-        },
-        {
-          id: "1000000362292826",
-          pid: "1000001251633881",
-          likeId: "0,100000177618509910000012516338811000000362292826",
-          parentName: "销售部门",
-          manager: null,
-          name: "销售1",
-          deptCode: "",
-          deptAddress: "",
-          deptPhone: "",
-          orderNum: 0
-        },
-        {
-          id: "1000001251633881",
-          pid: "1000001776185099",
-          likeId: "0,10000017761850991000001251633881",
-          parentName: "秘咖科技有限公司",
-          manager: null,
-          name: "销售部门",
-          deptCode: null,
-          deptAddress: null,
-          deptPhone: null,
-          orderNum: null
-        },
-        {
-          id: "1000001341234088",
-          pid: "1000001776185099",
-          likeId: "0,1000001776185099",
-          parentName: "秘咖网络科技有限公司",
-          manager: null,
-          name: "人才管理部1",
-          deptCode: "RCGL",
-          deptAddress: "",
-          deptPhone: "",
-          orderNum: 0
-        },
-        {
-          id: "1000001620535597",
-          pid: "1000001776185099",
-          likeId: "0,10000017761850991000001620535597",
-          parentName: "秘咖网络科技有限公司",
-          manager: null,
-          name: "软件研发部",
-          deptCode: null,
-          deptAddress: null,
-          deptPhone: null,
-          orderNum: null
-        },
-        {
-          id: "1000001776185099",
-          pid: "0",
-          likeId: "0,1000001776185099",
-          parentName: "顶级部门",
-          manager: null,
-          name: "秘咖网络科技有限公司",
-          deptCode: null,
-          deptAddress: null,
-          deptPhone: null,
-          orderNum: null
-        },
-        {
-          id: "1000002097176073",
-          pid: "1000001776185099",
-          likeId: "0,10000017761850991000002097176073",
-          parentName: "秘咖网络科技有限公司",
-          manager: "464156",
-          name: "售后服务部",
-          deptCode: "SHFWB",
-          deptAddress: "昆明",
-          deptPhone: "18687171906",
-          orderNum: null
-        }
-      ];
     },
     //新增部门事件
     addDept() {
@@ -219,15 +226,28 @@ export default {
     },
     //编辑部门点击事件
     handleEdit(index, row) {
-      
+      //设置为编辑
+      this.editTag = "1";
+      this.resetForm("addForm");
+      this.deptDialogTitle = "编辑部门";
+      this.dialogVisible = true;
+      //查询要编辑的数据回显
+      this.getDepartmentById(row.id);
     },
     //查询要编辑的数据
     async getDepartmentById(id) {
-      
+      let parm = {
+        id: id,
+      };
+      getDepartmentByIdApi(parm).then((res) => {
+        this.addForm = res.data;
+      });
     },
     //解决重置表单时报 'resetFields' of undefined的错
     resetForm(formName) {
-      
+      if (this.$refs[formName]) {
+        this.$refs[formName].resetFields();
+      }
     },
     //上级部门树创建成功调用
     parentCreated(treeObj) {
@@ -269,6 +289,7 @@ export default {
     //左侧部门树的点击事件
     ztreeOnClick(evt, treeId, treeNode) {
       this.selectPid = treeNode.id;
+      this.getDepartmentList();
       console.log(evt);
       console.log(treeId);
       console.log(treeNode);
@@ -276,13 +297,42 @@ export default {
     },
     //根据部门id查询下级部门
     async getDepartmentList() {
-      
+      let parm = {
+        selectPid: this.selectPid,
+        name: this.searchForm.deptName,
+        phone: this.searchForm.deptPhone,
+        currentPage: this.currentPage,
+        pageSize: this.pageSize,
+      };
+      getDepartmentListApi(parm).then((res) => {
+        console.log(res);
+        this.tableData = res.data.records;
+        this.total = res.data.total;
+        this.pageSize = res.data.size;
+        this.currentPage = res.data.current;
+      });
     },
     //删除部门
     handleDelete(index, row) {
-      
+      this.$confirm("确定删除吗 ?", "系统提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(async () => {
+        let parm = {
+          id: row.id,
+        };
+        deleteByIdApi(parm).then((res) => {
+          //刷新上级部门树
+          this.getParentTree();
+          //获取左侧部门树
+          this.getLeftTree();
+          //刷新列表
+          this.getDepartmentList();
+          this.dialogVisible = false;
+        });
+      });
     },
-
     //页容量改变时候调用
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -290,7 +340,7 @@ export default {
     //点击页数时候调用
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
-    }
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -301,9 +351,11 @@ export default {
     return {
       addDeptValdate: {
         parentName: [
-          { required: true, trigger: "change", message: "请填选择上级部门" }
+          { required: true, trigger: "change", message: "请填选择上级部门" },
         ],
-        name: [{ required: true, trigger: "change", message: "请填写部门名称" }]
+        name: [
+          { required: true, trigger: "change", message: "请填写部门名称" },
+        ],
       },
       editTag: "0",
       //数据总条数
@@ -320,7 +372,7 @@ export default {
         view: {
           showLine: true,
           showIcon: false,
-          fontCss: { "font-size": "12px", color: "#333" }
+          fontCss: { "font-size": "12px", color: "#333" },
         },
         //设置这里会显示复选框
         // check: {
@@ -331,12 +383,12 @@ export default {
             enable: true,
             idKey: "id",
             pIdKey: "pid",
-            rootPId: "0"
-          }
+            rootPId: "0",
+          },
         },
         callback: {
-          onClick: this.ztreeParentOnClick
-        }
+          onClick: this.ztreeParentOnClick,
+        },
       },
       //添加部门表单数据域
       addForm: {
@@ -347,7 +399,7 @@ export default {
         deptCode: "",
         deptPhone: "",
         deptAddress: "",
-        orderNum: ""
+        orderNum: "",
       },
       //弹框标题
       deptDialogTitle: "",
@@ -362,7 +414,7 @@ export default {
           //是否显示节点的图标
           showIcon: false,
           //个性化文字样式
-          fontCss: { "font-size": "12px", color: "#333" }
+          fontCss: { "font-size": "12px", color: "#333" },
         },
         //设置这里会显示复选框
         // check: {
@@ -375,94 +427,21 @@ export default {
             enable: true,
             idKey: "id",
             pIdKey: "pid",
-            rootPId: "0"
-          }
+            rootPId: "0",
+          },
         },
         //回调函数配置
         callback: {
           //；配置树的点击事件
-          onClick: this.ztreeOnClick
-        }
+          onClick: this.ztreeOnClick,
+        },
       },
       //树绑定数据
-      nodes: [
-        {
-          id: "1000000362292826",
-          pid: "1000001251633881",
-          likeId: "0,100000177618509910000012516338811000000362292826",
-          parentName: "销售部门",
-          manager: null,
-          name: "销售1",
-          deptCode: "",
-          deptAddress: "",
-          deptPhone: "",
-          orderNum: 0
-        },
-        {
-          id: "1000001251633881",
-          pid: "1000001776185099",
-          likeId: "0,10000017761850991000001251633881",
-          parentName: "秘咖科技有限公司",
-          manager: null,
-          name: "销售部门",
-          deptCode: null,
-          deptAddress: null,
-          deptPhone: null,
-          orderNum: null
-        },
-        {
-          id: "1000001341234088",
-          pid: "1000001776185099",
-          likeId: "0,1000001776185099",
-          parentName: "秘咖网络科技有限公司",
-          manager: null,
-          name: "人才管理部1",
-          deptCode: "RCGL",
-          deptAddress: "",
-          deptPhone: "",
-          orderNum: 0
-        },
-        {
-          id: "1000001620535597",
-          pid: "1000001776185099",
-          likeId: "0,10000017761850991000001620535597",
-          parentName: "秘咖网络科技有限公司",
-          manager: null,
-          name: "软件研发部",
-          deptCode: null,
-          deptAddress: null,
-          deptPhone: null,
-          orderNum: null
-        },
-        {
-          id: "1000001776185099",
-          pid: "0",
-          likeId: "0,1000001776185099",
-          parentName: "顶级部门",
-          manager: null,
-          name: "秘咖网络科技有限公司",
-          deptCode: null,
-          deptAddress: null,
-          deptPhone: null,
-          orderNum: null
-        },
-        {
-          id: "1000002097176073",
-          pid: "1000001776185099",
-          likeId: "0,10000017761850991000002097176073",
-          parentName: "秘咖网络科技有限公司",
-          manager: "464156",
-          name: "售后服务部",
-          deptCode: "SHFWB",
-          deptAddress: "昆明",
-          deptPhone: "18687171906",
-          orderNum: null
-        }
-      ],
+      nodes: [],
       //搜索数据域绑定
       searchForm: {
         deptName: "",
-        deptPhone: ""
+        deptPhone: "",
       },
       //当前页数
       currentPage: 1,
@@ -470,45 +449,9 @@ export default {
       //表格高度
       tableHeight: 0,
       //部门列表数据绑定
-      tableData: [
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-08",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-06",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-07",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        }
-      ]
+      tableData: [],
     };
-  }
+  },
 };
 </script>
 
