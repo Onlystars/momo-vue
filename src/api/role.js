@@ -44,3 +44,29 @@ export function getRoleListApi(data) {
     data,
   });
 }
+
+// 分配角色角色列表
+export function getRolistForAssingApi() {
+  return request({
+    url: "/api/role/getRolistForAssing",
+    method: "get",
+  });
+}
+
+// 根据用户id查询角色id
+export function getRoleIdByUserIdApi(data) {
+  return request({
+    url: "/api/role/getRoleIdByUserId",
+    method: "post",
+    data,
+  });
+}
+
+// 分配角色保存
+export function assingRoleApi(data) {
+  return request({
+    url: "/api/role/assingRole",
+    method: "post",
+    data,
+  });
+}
