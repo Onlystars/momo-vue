@@ -70,3 +70,21 @@ export function assingRoleApi(data) {
     data,
   });
 }
+
+// 分配权限树查询
+export function permissionTreeApi(data) {
+  return request({
+    url: "/api/role/permissionTree",
+    method: "post",
+    data,
+  });
+}
+
+// 保存权限
+export function saveAssignRoleApi(data) {
+  return request({
+    url: "/api/role/saveAssignRole",
+    method: "post",
+    data,
+  });
+}

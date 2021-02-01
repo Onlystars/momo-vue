@@ -122,6 +122,8 @@ export default {
           // 保存auths
           this.$store.commit("setAuths", res.data.authList);
           sessionStorage.setItem("auths", JSON.stringify(res.data.authList));
+          // 保存userId
+          sessionStorage.setItem("userId", JSON.stringify(res.data.userId));
           //动态生成路由
           this.$store.commit("getMenuList", this.$router);
           this.$message({

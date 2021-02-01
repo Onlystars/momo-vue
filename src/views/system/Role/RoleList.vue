@@ -131,6 +131,8 @@ import {
   updateRoleApi,
   deleteRoleApi,
   getRoleListApi,
+  permissionTreeApi,
+  saveAssignRoleApi,
 } from "@/api/role";
 export default {
   components: {
@@ -185,18 +187,16 @@ export default {
     },
     //删除角色
     deleteRole(row) {
-      this
-        .$confirm("确定删除吗？", "系统提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "waring",
-        })
-        .then(async () => {
-          deleteRoleApi(row).then(res => {
-            console.log(res);
-            this.getRoleList();
-          })
+      this.$confirm("确定删除吗？", "系统提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "waring",
+      }).then(async () => {
+        deleteRoleApi(row).then((res) => {
+          console.log(res);
+          this.getRoleList();
         });
+      });
     },
     //编辑角色事件
     editRole(row) {
@@ -231,6 +231,9 @@ export default {
         list: this.checkPermissions,
         roleId: this.roldId,
       };
+      saveAssignRoleApi(parms).then((res) => {
+        this.dialogVisible = false;
+      });
     },
     //分配角色权限按钮事件
     async assignRole(row) {
@@ -243,211 +246,9 @@ export default {
         userId: sessionStorage.getItem("userId"),
         roleId: row.id,
       };
-      this.treeDatas = [
-        {
-          id: 17,
-          pid: 0,
-          name: "系统管理",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 18,
-          pid: 17,
-          name: "用户管理",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 20,
-          pid: 18,
-          name: "新增",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 21,
-          pid: 18,
-          name: "修改",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 22,
-          pid: 18,
-          name: "删除",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 23,
-          pid: 17,
-          name: "角色管理",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 25,
-          pid: 23,
-          name: "新增",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 26,
-          pid: 23,
-          name: "修改",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 27,
-          pid: 23,
-          name: "删除",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 28,
-          pid: 17,
-          name: "权限管理",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 30,
-          pid: 28,
-          name: "新增",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 31,
-          pid: 28,
-          name: "修改",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 32,
-          pid: 28,
-          name: "删除",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 33,
-          pid: 17,
-          name: "机构管理",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 34,
-          pid: 0,
-          name: "商品管理",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 36,
-          pid: 34,
-          name: "分类管理",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 37,
-          pid: 34,
-          name: "品牌管理",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 38,
-          pid: 36,
-          name: "新增",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 39,
-          pid: 36,
-          name: "编辑",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 40,
-          pid: 37,
-          name: "新增",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 41,
-          pid: 37,
-          name: "编辑",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 42,
-          pid: 0,
-          name: "系统工具",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 43,
-          pid: 42,
-          name: "代码生成",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 46,
-          pid: 33,
-          name: "新增",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 76,
-          pid: 33,
-          name: "编辑",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 77,
-          pid: 42,
-          name: "接口文档",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 78,
-          pid: 33,
-          name: "删除",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 79,
-          pid: 23,
-          name: "分配权限",
-          open: null,
-          checked: true,
-        },
-        {
-          id: 80,
-          pid: 18,
-          name: "分配角色",
-          open: null,
-          checked: true,
-        },
-      ];
+      permissionTreeApi(parm).then((res) => {
+        this.treeDatas = res.data;
+      });
     },
     //pageSize改变时候调用
     handleSizeChange(val) {
